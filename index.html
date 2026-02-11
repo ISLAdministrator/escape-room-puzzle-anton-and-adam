@@ -1,30 +1,43 @@
-<!--This is an HTML Comment, text just for humans :) It is not part of your code.
-Good coders use comments frequently to stay organized and communicate with collaborators.
-
-The code below is basic HTML for your puzzle.
-You can edit it, add to it, and delete parts of it.
-
-DO NOT let AI code for you!!
--->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Escape Room</title>
+  <title>ISL: The Aftermath</title>
   <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 </head>
 <body>
 
-  <h1>Escape Room</h1>
+  <div id="start-screen">
+    <div class="instruction-box">
+      <h1>ISL EMERGENCY PROTOCOL</h1>
+      <p>STATUS: APOCALYPSE DETECTED</p>
+      <hr>
+      <p>> The school systems are failing.</p>
+      <p>> To restore unity, you must identify the core ISL Values.</p>
+      <p>> Type the correct word to bypass the corrupted cipher.</p>
+      <p>> Caution: 5 errors will trigger the backup hint system.</p>
+      <hr>
+      <button id="start-btn">INITIALIZE RECOVERY</button>
+    </div>
+  </div>
 
-  <p>
-    Write the story of your escape room here.
-  </p>
+  <div class="terminal-frame">
+    <div class="scanlines"></div>
+    <h1 class="critical-text">SYSTEM FAILURE: ISL</h1>
 
-  <button id="button">Click me</button>
+    <div class="puzzle-area">
+      <p>DECODE WORD:</p>
+      <h2 id="scrambled-word">EMDPWREOE</h2>
+      
+      <input type="text" id="user-input" placeholder="TYPE HERE..." autocomplete="off">
+      <br>
+      <button id="button">RUN DIAGNOSTICS</button>
+    </div>
 
-  <p id="output"></p>
+    <p id="output"></p>
+    <p id="hint" class="hidden-hint"></p>
+  </div>
 
   <script src="script.js"></script>
 </body>
