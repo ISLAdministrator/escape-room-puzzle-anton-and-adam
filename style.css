@@ -189,3 +189,10 @@ button:hover {
   z-index: 5;
   pointer-events: none;
 }
+#gameCanvas {
+  border: 2px solid #4dfd4d;
+  background-color: #000;
+  display: block;
+  margin: 0 auto;
+  margin-bottom: 20px;
+}

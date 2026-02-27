@@ -31,17 +31,20 @@
   </div>
 
   <div class="terminal-frame">
-    <div class="scanlines"></div>
-    <h1 class="critical-text" id="level-indicator">GENERATOR_01: OFFLINE</h1>
+  <div class="scanlines"></div>
+  <h1 class="critical-text" id="level-indicator">GENERATOR_01: OFFLINE</h1>
 
-    <div class="puzzle-area">
-      <p>DECODE SEQUENCE:</p>
-      <h2 id="scrambled-word">EMDPWREOE</h2>
+  <canvas id="gameCanvas" width="600" height="400" class="hidden"></canvas>
 
-      <input type="text" id="user-input" placeholder="TYPE WORD..." autocomplete="off">
-      <br>
-      <button id="button">RUN DIAGNOSTICS</button>
-    </div>
+  <div class="puzzle-area" id="terminal-area">
+    <p>DECODE SEQUENCE:</p>
+    <h2 id="scrambled-word">EMDPWREOE</h2>
+
+    <input type="text" id="user-input" placeholder="TYPE WORD..." autocomplete="off">
+    <br>
+    <button id="button">RUN DIAGNOSTICS</button>
+  </div>
+</div>
 
     <p id="output"></p>
     <p id="hint" class="hidden-hint"></p>

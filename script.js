@@ -1,87 +1,102 @@
 // --- Elements ---
-const startBtn = document.getElementById("start-btn");
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
+const puzzleArea = document.getElementById("terminal-area");
 const startScreen = document.getElementById("start-screen");
 const transitionScreen = document.getElementById("transition-screen");
 const nextLvlBtn = document.getElementById("next-lvl-btn");
-
-const btn = document.getElementById("button");
-const input = document.getElementById("user-input");
-const output = document.getElementById("output");
-const hint = document.getElementById("hint");
 const scrambledEl = document.getElementById("scrambled-word");
 const levelIndicator = document.getElementById("level-indicator");
+const input = document.getElementById("user-input");
 
 // --- Game Data ---
 let currentLevel = 0;
-let attempts = 0;
+let gameState = "start"; // "start", "terminal", "hallway", "qte"
+let player = { x: 50, y: 170, size: 30, speed: 5 };
+let door = { x: 550, y: 100, width: 20, height: 200 };
+let qteData = { active: false, sliderX: 0, targetX: 450, targetWidth: 50, speed: 10 };
 
 const levels = [
-  {
-    word: "EMPOWERED",
-    scramble: "EMDPWREOE",
-    note: "Generator 1 is pulsing. Power is flowing to the Science Wing. We need to reach the second generator in the gym to restore more systems.",
-    indicator: "GENERATOR_01",
-    hint: "HINT: It starts with 'E'..."
-  },
-  {
-    word: "COLLABORATIVE",
-    scramble: "CBRAOLLOTAEIV",
-    note: "Generator 2 hums to life. 'History does not give answers. It gives answers.' Only one system remains: The Central Mainframe.",
-    indicator: "GENERATOR_02",
-    hint: "HINT: It starts with 'C'..."
-  },
-  {
-    word: "INCLUSIVE",
-    scramble: "IULCSINVE",
-    note: "All systems humming. Unity restored. The school perimeter is secure. You have saved ISL.",
-    indicator: "CENTRAL_MAINFRAME",
-    hint: "HINT: It starts with 'I'..."
-  }
+  { word: "EMPOWERED", scramble: "EMDPWREOE", indicator: "GENERATOR_01" },
+  { word: "COLLABORATIVE", scramble: "CBRAOLLOTAEIV", indicator: "GENERATOR_02" },
+  { word: "INCLUSIVE", scramble: "IULCSINVE", indicator: "CENTRAL_MAINFRAME" }
 ];
 
-// --- Functions ---
-
-// Start Game
-startBtn.addEventListener("click", () => startScreen.classList.add("hidden"));
-
-// Check Answer
-btn.addEventListener("click", function () {
-  const guess = input.value.toUpperCase().trim();
-  const current = levels[currentLevel];
-
-  if (guess === current.word) {
-    // Show the Transition Note
-    document.getElementById("note-text").innerText = current.note;
-    document.getElementById("note-title").innerText = current.indicator;
-    transitionScreen.classList.remove("hidden");
-    output.innerText = "";
-    input.value = "";
-    attempts = 0;
-    hint.style.display = "none";
-  } else {
-    attempts++;
-    output.innerText = "> ERROR: CORRUPTED DATA.";
-    output.style.color = "#ff4444";
-    if (attempts >= 5) {
-      hint.innerText = "HINT: AN ISL VALUE";
-      hint.style.display = "block";
-    }
-  }
+// --- Input Handling ---
+let keys = {};
+window.addEventListener("keydown", e => keys[e.key] = true);
+window.addEventListener("keyup", e => keys[e.key] = false);
+window.addEventListener("keydown", e => {
+  if (gameState === "qte" && e.key === " ") checkQTE();
 });
 
-// Move to next level
+// --- Game Loop ---
+function gameLoop() {
+  if (gameState === "hallway") {
+    updateHallway();
+    drawHallway();
+  }
+  requestAnimationFrame(gameLoop);
+}
+
+// --- Hallway Logic ---
+function updateHallway() {
+  if (keys["w"]) player.y -= player.speed;
+  if (keys["s"]) player.y += player.speed;
+  if (keys["a"]) player.x -= player.speed;
+  if (keys["d"]) player.x += player.speed;
+
+  // Collision with door
+  if (player.x + player.size > door.x) {
+    player.x = door.x - player.size;
+    startQTE();
+  }
+}
+
+function drawHallway() {
+  ctx.fillStyle = "#000";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  
+  // Draw floor/walls
+  ctx.strokeStyle = "#222";
+  ctx.strokeRect(0, 50, canvas.width, 300);
+
+  // Draw Door
+  ctx.fillStyle = "#ff4444";
+  ctx.fillRect(door.x, door.y, door.width, door.height);
+  
+  // Draw Player
+  ctx.fillStyle = "#4dfd4d";
+  ctx.fillRect(player.x, player.y, player.size, player.size);
+}
+
+// --- QTE Logic ---
+function startQTE() {
+  gameState = "qte";
+  qteData.active = true;
+  qteData.sliderX = 0;
+}
+
+function checkQTE() {
+  if (qteData.sliderX > qteData.targetX && qteData.sliderX < qteData.targetX + qteData.targetWidth) {
+    // Success!
+    gameState = "terminal";
+    canvas.classList.add("hidden");
+    puzzleArea.classList.remove("hidden");
+    player.x = 50; // Reset player position
+  } else {
+    // Fail - reset QTE
+    qteData.sliderX = 0;
+  }
+}
+
+// --- Transition Logic ---
 nextLvlBtn.addEventListener("click", () => {
-  currentLevel++;
-
-  if (currentLevel < levels.length) {
-    // Load next puzzle
-    scrambledEl.innerText = levels[currentLevel].scramble;
-    levelIndicator.innerText = "GENERATOR_02: OFFLINE";
-    transitionScreen.classList.add("hidden");
-  } else {
-    // Game Over / Win
-    document.getElementById("note-title").innerText = "SYSTEM RECOVERED";
-    document.getElementById("note-text").innerText = "You have escaped the darkness.";
-    nextLvlBtn.style.display = "none";
-  }
+  transitionScreen.classList.add("hidden");
+  gameState = "hallway";
+  canvas.classList.remove("hidden");
+  puzzleArea.classList.add("hidden");
 });
+
+// Start loop
+gameLoop();
