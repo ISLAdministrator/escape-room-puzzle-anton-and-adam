@@ -3,6 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ISL: The Aftermath</title>
   <link rel="stylesheet" href="style.css">
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
@@ -31,20 +32,19 @@
   </div>
 
   <div class="terminal-frame">
-  <div class="scanlines"></div>
-  <h1 class="critical-text" id="level-indicator">GENERATOR_01: OFFLINE</h1>
+    <div class="scanlines"></div>
+    <h1 class="critical-text" id="level-indicator">GENERATOR_01: OFFLINE</h1>
 
-  <canvas id="gameCanvas" width="600" height="400" class="hidden"></canvas>
+    <canvas id="gameCanvas" width="600" height="400" class="hidden"></canvas>
 
-  <div class="puzzle-area" id="terminal-area">
-    <p>DECODE SEQUENCE:</p>
-    <h2 id="scrambled-word">EMDPWREOE</h2>
+    <div class="puzzle-area" id="terminal-area">
+      <p>DECODE SEQUENCE:</p>
+      <h2 id="scrambled-word">EMDPWREOE</h2>
 
-    <input type="text" id="user-input" placeholder="TYPE WORD..." autocomplete="off">
-    <br>
-    <button id="button">RUN DIAGNOSTICS</button>
-  </div>
-</div>
+      <input type="text" id="user-input" placeholder="TYPE WORD..." autocomplete="off">
+      <br>
+      <button id="button">RUN DIAGNOSTICS</button>
+    </div>
 
     <p id="output"></p>
     <p id="hint" class="hidden-hint"></p>
