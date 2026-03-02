@@ -30,11 +30,42 @@ window.addEventListener("keydown", e => {
   if (gameState === "qte" && e.key === " ") checkQTE();
 });
 
-// --- Game Loop ---
+function drawQTE() {
+  // Clear the canvas
+  ctx.fillStyle = "#000";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Draw the Background Bar
+  ctx.strokeStyle = "#4dfd4d";
+  ctx.lineWidth = 2;
+  ctx.strokeRect(100, 180, 400, 40);
+
+  // Draw the "Target Zone" (The Green Area you need to hit)
+  ctx.fillStyle = "#ff4444"; // Red zone
+  ctx.fillRect(100 + qteData.targetX, 180, qteData.targetWidth, 40);
+
+  // Move the slider back and forth
+  qteData.sliderX += qteData.speed;
+  if (qteData.sliderX > 400 || qteData.sliderX < 0) {
+    qteData.speed *= -1; // Reverse direction
+  }
+
+  // Draw the moving Slider (The white line)
+  ctx.fillStyle = "#fff";
+  ctx.fillRect(100 + qteData.sliderX, 175, 5, 50);
+
+  // Text instructions
+  ctx.fillStyle = "#4dfd4d";
+  ctx.font = "10px 'Press Start 2P'";
+  ctx.fillText("BREACHING DOOR... PRESS SPACE!", 120, 150);
+}
+
 function gameLoop() {
   if (gameState === "hallway") {
     updateHallway();
     drawHallway();
+  } else if (gameState === "qte") {
+    drawQTE(); // This is the new part!
   }
   requestAnimationFrame(gameLoop);
 }
@@ -99,4 +130,26 @@ nextLvlBtn.addEventListener("click", () => {
 });
 
 // Start loop
-gameLoop();
+document.getElementById("start-btn").addEventListener("click", () => {
+  document.getElementById("start-screen").classList.add("hidden");
+  gameState = "terminal";
+});
+
+// Start the game from the intro screen
+document.getElementById("start-btn").addEventListener("click", () => {
+  document.getElementById("start-screen").classList.add("hidden");
+  gameState = "terminal";
+});
+
+// Check the word when "Run Diagnostics" is clicked
+document.getElementById("button").addEventListener("click", () => {
+  const userValue = input.value.toUpperCase();
+  if (userValue === levels[currentLevel].word) {
+    // Show transition screen
+    transitionScreen.classList.remove("hidden");
+    currentLevel++;
+  } else {
+    alert("ACCESS DENIED: INCORRECT SEQUENCE");
+    input.value = "";
+  }
+});
