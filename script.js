@@ -9,6 +9,19 @@ const scrambledEl = document.getElementById("scrambled-word");
 const levelIndicator = document.getElementById("level-indicator");
 const input = document.getElementById("user-input");
 
+function updateTerminal() {
+  const current = levels[currentLevel];
+  if (current) {
+    scrambledEl.innerText = current.scramble;
+    levelIndicator.innerText = `${current.indicator}: OFFLINE`;
+    input.value = ""; // Clears the previous answer
+  } else {
+    // If there are no more levels, you win!
+    alert("SYSTEM RECOVERY COMPLETE. ISL IS SECURE.");
+    location.reload(); 
+  }
+}
+
 // --- Game Data ---
 let currentLevel = 0;
 let gameState = "start"; // "start", "terminal", "hallway", "qte"
@@ -129,27 +142,49 @@ nextLvlBtn.addEventListener("click", () => {
   puzzleArea.classList.add("hidden");
 });
 
-// Start loop
+// --- Level/Terminal Management ---
+function updateTerminal() {
+  const current = levels[currentLevel];
+  if (current) {
+    scrambledEl.innerText = current.scramble;
+    levelIndicator.innerText = `${current.indicator}: OFFLINE`;
+    input.value = ""; 
+  } else {
+    // Final Victory
+    alert("SYSTEM RECOVERY COMPLETE. ISL IS SECURE.");
+    location.reload(); 
+  }
+}
+
+// --- Event Listeners ---
+
+// 1. Initial Start
 document.getElementById("start-btn").addEventListener("click", () => {
   document.getElementById("start-screen").classList.add("hidden");
   gameState = "terminal";
 });
 
-// Start the game from the intro screen
-document.getElementById("start-btn").addEventListener("click", () => {
-  document.getElementById("start-screen").classList.add("hidden");
-  gameState = "terminal";
-});
-
-// Check the word when "Run Diagnostics" is clicked
+// 2. Run Diagnostics (Word Check)
 document.getElementById("button").addEventListener("click", () => {
   const userValue = input.value.toUpperCase();
   if (userValue === levels[currentLevel].word) {
-    // Show transition screen
     transitionScreen.classList.remove("hidden");
+    // Advance the level but don't update terminal yet
     currentLevel++;
   } else {
     alert("ACCESS DENIED: INCORRECT SEQUENCE");
     input.value = "";
   }
 });
+
+// 3. Proceed to Hallway
+nextLvlBtn.addEventListener("click", () => {
+  transitionScreen.classList.add("hidden");
+  puzzleArea.classList.add("hidden"); // Hide the puzzle
+  canvas.classList.remove("hidden"); // Show the walking area
+  gameState = "hallway";
+  updateTerminal(); // Prep the next word for when they finish the QTE
+});
+
+// Start the game loop
+gameLoop();
