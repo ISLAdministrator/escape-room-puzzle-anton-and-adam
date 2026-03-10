@@ -10,16 +10,17 @@
 </head>
 
 <body>
-
-  <div id="start-screen">
+<div id="start-screen">
     <div class="instruction-box">
-      <h1>ISL EMERGENCY PROTOCOL</h1>
-      <p>> The school is dark. Systems failing.</p>
-      <p>> Identify the core values to restore the grid.</p>
+      <h1>LOCATION: ROOM 406 (I&S / Language)</h1>
+      <p>> You step into the classroom and realize this isn't about fixing things — it’s about understanding consequences.</p>
+      <p>> The walls are covered with timelines and radiation experiments. Notes in the margins read: “Stabilised — but only temporarily.”</p>
+      <p>> A message glows on the board: <strong>“HISTORY DOES NOT GIVE ANSWERS. IT GIVES WARNINGS.”</strong></p>
+      <p>> Identify what scientists in the past got wrong to move forward.</p>
       <hr>
       <button id="start-btn">INITIALIZE RECOVERY</button>
     </div>
-  </div>
+</div>
 
   <div id="transition-screen" class="hidden">
     <div class="instruction-box">
@@ -48,6 +49,19 @@
 
     <p id="output"></p>
     <p id="hint" class="hidden-hint"></p>
+  </div>
+
+<div id="win-screen" class="hidden">
+    <div class="instruction-box">
+      <h1 style="color: #4dfd4d;">SYSTEMS RESTORED</h1>
+      <p>> The lights flicker back to life. The hum of the generators fills the halls once more.</p>
+      <p>> You have successfully navigated the aftermath and upheld the core values of ISL.</p>
+      <p>> <strong>ENCRYPTION KEY FOUND:</strong></p>
+      <h2 style="text-align: center; font-size: 40px; color: #ff4444;">"N"</h2>
+      <p>> Keep this letter safe. You will need it for the final sequence.</p>
+      <hr>
+      <button onclick="location.reload()">REBOOT TERMINAL</button>
+    </div>
   </div>
 
   <script src="script.js"></script>
