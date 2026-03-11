@@ -1,6 +1,7 @@
 const bgMusic = new Audio('music.mp3'); 
 bgMusic.loop = true;
 bgMusic.volume = 0.7;
+
 // --- Elements ---
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
@@ -13,12 +14,10 @@ const levelIndicator = document.getElementById("level-indicator");
 const input = document.getElementById("user-input");
 
 // --- Game Data ---
-
 let currentLevel = 0;
-let gameState = "start"; // "start", "terminal", "hallway", "qte"
+let gameState = "start"; 
 let player = { x: 50, y: 170, size: 30, speed: 5 };
 let door = { x: 550, y: 100, width: 20, height: 200 };
-// QTE Slider data: active, current position, target position, target width, speed
 let qteData = { active: false, sliderX: 0, targetX: 250, targetWidth: 50, speed: 8 };
 
 const levels = [
@@ -36,7 +35,7 @@ const levels = [
     word: "COLLABORATIVE", 
     scramble: "CBRAOLLOTAEIV", 
     indicator: "GENERATOR_02",
-    qteSpeed: 14, // Faster!
+    qteSpeed: 14, 
     walls: [
       {x: 100, y: 0, w: 20, h: 320},
       {x: 200, y: 80, w: 20, h: 320},
@@ -48,13 +47,13 @@ const levels = [
     word: "INCLUSIVE", 
     scramble: "IULCSINVE", 
     indicator: "CENTRAL_MAINFRAME",
-    qteSpeed: 20, // Very Fast!
+    qteSpeed: 20, 
     walls: [
-      {x: 100, y: 100, w: 400, h: 20},
-      {x: 100, y: 200, w: 400, h: 20},
-      {x: 100, y: 0, w: 20, h: 100},
-      {x: 250, y: 120, w: 20, h: 80},
-      {x: 400, y: 220, w: 20, h: 180}
+      {x: 100, y: 60, w: 400, h: 20}, 
+      {x: 100, y: 260, w: 400, h: 20},
+      {x: 100, y: 80, w: 20, h: 100},
+      {x: 250, y: 140, w: 20, h: 80},
+      {x: 400, y: 240, w: 20, h: 160}
     ]
   }
 ];
@@ -64,11 +63,22 @@ let keys = {};
 window.addEventListener("keydown", e => keys[e.key] = true);
 window.addEventListener("keyup", e => keys[e.key] = false);
 
-// Spacebar to trigger QTE
 window.addEventListener("keydown", e => {
   if (gameState === "qte" && e.key === " ") checkQTE();
 });
 
+// --- Game Loop ---
+function gameLoop() {
+  if (gameState === "hallway") {
+    updateHallway();
+    drawHallway();
+  } else if (gameState === "qte") {
+    drawQTE();
+  }
+  requestAnimationFrame(gameLoop);
+}
+
+// --- Hallway Logic ---
 function updateHallway() {
   let nextX = player.x;
   let nextY = player.y;
@@ -78,12 +88,11 @@ function updateHallway() {
   if (keys["a"] || keys["ArrowLeft"]) nextX -= player.speed;
   if (keys["d"] || keys["ArrowRight"]) nextX += player.speed;
 
-  // --- NEW BOUNDARY LOCK ---
-  // If it's NOT the final level, don't let them go off-screen
+  // BOUNDARY LOCK: Levels 1 & 2 only
   if (currentLevel < 3) {
-      if (nextY < 50) nextY = 50; // Top edge
-      if (nextY > 320) nextY = 320; // Bottom edge
-      if (nextX < 0) nextX = 0; // Left edge
+      if (nextY < 50) nextY = 50; 
+      if (nextY > 320) nextY = 320; 
+      if (nextX < 0) nextX = 0; 
   }
 
   let hitWall = false;
@@ -110,17 +119,17 @@ function drawHallway() {
   ctx.fillStyle = "#000";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   
-  // Draw the Maze Walls
-  ctx.fillStyle = "#1a331a"; // Gritty Dark Green
+  ctx.fillStyle = "#1a331a"; 
   const currentWalls = levels[currentLevel - 1]?.walls || [];
   currentWalls.forEach(wall => {
     ctx.fillRect(wall.x, wall.y, wall.w, wall.h);
   });
 
-  // Draw Door (Red) and Player (Green)
   ctx.fillStyle = "#ff4444";
   ctx.fillRect(door.x, door.y, door.width, door.height);
-  ctx.fillStyle = "#4dfd4d";
+  
+  // Player Color logic (Glitch for Level 3)
+  ctx.fillStyle = (currentLevel === 3 && Math.random() > 0.8) ? "#ffffff" : "#4dfd4d";
   ctx.fillRect(player.x, player.y, player.size, player.size);
 }
 
@@ -129,55 +138,40 @@ function startQTE() {
   gameState = "qte";
   qteData.active = true;
   qteData.sliderX = 0;
-  // This line makes the game harder as you progress!
   qteData.speed = levels[currentLevel - 1].qteSpeed; 
 }
 
 function drawQTE() {
   ctx.fillStyle = "#000";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-  // Draw the Background Bar
   ctx.strokeStyle = "#4dfd4d";
   ctx.lineWidth = 2;
   ctx.strokeRect(100, 180, 400, 40);
-
-  // Draw the "Target Zone" (The Green Area you need to hit)
-  ctx.fillStyle = "#4dfd4d"; // Change to green for target
+  ctx.fillStyle = "#4dfd4d"; 
   ctx.fillRect(100 + qteData.targetX, 180, qteData.targetWidth, 40);
 
-  // Move the slider back and forth
   qteData.sliderX += qteData.speed;
-  if (qteData.sliderX > 400 || qteData.sliderX < 0) {
-    qteData.speed *= -1; // Reverse direction
-  }
+  if (qteData.sliderX > 400 || qteData.sliderX < 0) qteData.speed *= -1;
 
-  // Draw the moving Slider (The white line)
   ctx.fillStyle = "#fff";
   ctx.fillRect(100 + qteData.sliderX, 175, 5, 50);
-
-  // Text instructions
   ctx.fillStyle = "#4dfd4d";
   ctx.font = "10px 'Press Start 2P'";
   ctx.fillText("BREACHING... PRESS SPACE!", 120, 150);
 }
 
 function checkQTE() {
-  // Check if slider is within target zone
   if (qteData.sliderX > qteData.targetX && qteData.sliderX < qteData.targetX + qteData.targetWidth) {
-    // Success!
     gameState = "terminal";
     canvas.classList.add("hidden");
     puzzleArea.classList.remove("hidden");
-    player.x = 50; // Reset player position for next hallway
-    updateTerminal(); // Load next level word
+    player.x = 50; 
+    updateTerminal(); 
   } else {
-    // Fail - reset slider
     qteData.sliderX = 0;
   }
 }
 
-// --- Terminal & Level Management ---
 function updateTerminal() {
   const current = levels[currentLevel];
   if (current) {
@@ -185,55 +179,34 @@ function updateTerminal() {
     levelIndicator.innerText = `${current.indicator}: OFFLINE`;
     input.value = ""; 
   } else {
-    // THIS IS THE NEW ENDING LOGIC
     gameState = "end";
     puzzleArea.classList.add("hidden");
     canvas.classList.add("hidden");
     document.getElementById("win-screen").classList.remove("hidden");
-    
-    // Stop the music or lower it for the ending
     bgMusic.volume = 0.2;
   }
 }
 
 // --- Event Listeners ---
-
-// 1. Initial Start (Starts Music and hides Intro)
 document.getElementById("start-btn").addEventListener("click", () => {
-  // PLAY MUSIC HERE
-  bgMusic.play().catch(error => {
-    console.log("Music play blocked by browser. Click again or check file.");
-  });
-
+  bgMusic.play().catch(e => console.log("Music blocked"));
   document.getElementById("start-screen").classList.add("hidden");
   gameState = "terminal";
 });
 
-// Check the word
 document.getElementById("button").addEventListener("click", () => {
   const userValue = input.value.toUpperCase();
-  
   if (userValue === levels[currentLevel].word) {
     transitionScreen.classList.remove("hidden");
-    currentLevel++; // Moves to the next level
+    currentLevel++; 
     
-    // Default text for the transition screen
     document.getElementById("note-title").innerText = `GENERATOR ${currentLevel} ONLINE`;
-    document.getElementById("note-text").innerText = "Transferring power to the next sector...";
-    document.querySelector(".quote").innerText = '"History does not give answers. It gives answers."';
-
-    // --- THE LEVEL 3 "THINK OUTSIDE THE BOX" HINT ---
     if (currentLevel === 3) {
-        // We change the title to look like a system error
         document.getElementById("note-title").innerText = "⚠️ SYSTEM CORRUPTION DETECTED";
         document.getElementById("note-title").style.color = "#ff4444";
-        
-        // The specific hint for the player
         document.getElementById("note-text").innerHTML = 
             "<strong>ERROR:</strong> Sector Labyrinth is physically impassable.<br>" +
-            "<em>HINT: The boundaries of this world are thinner than they look. Step beyond the edges to find the truth.</em>";
-            
-        // Changing the quote to something more cryptic
+            "<em>HINT: Room 406 is merging with the void. To reach Room 403, you must leave the mapped reality. Step beyond the edges.</em>";
         document.querySelector(".quote").innerText = '"When the path is blocked, the void is your only friend."';
     }
   } else {
@@ -242,7 +215,6 @@ document.getElementById("button").addEventListener("click", () => {
   }
 });
 
-// Proceed to Hallway
 nextLvlBtn.addEventListener("click", () => {
   transitionScreen.classList.add("hidden");
   puzzleArea.classList.add("hidden"); 
@@ -250,11 +222,11 @@ nextLvlBtn.addEventListener("click", () => {
   gameState = "hallway";
 });
 
-// Start loop
-gameLoop();
 function isColliding(rect1, rect2) {
   return rect1.x < rect2.x + rect2.w &&
          rect1.x + rect1.size > rect2.x &&
          rect1.y < rect2.y + rect2.h &&
          rect1.y + rect1.size > rect2.y;
 }
+
+gameLoop();
