@@ -27,8 +27,8 @@ const levels = [
     indicator: "GENERATOR_01",
     qteSpeed: 9, 
     walls: [
-      {x: 150, y: 0, w: 30, h: 300}, 
-      {x: 350, y: 100, w: 30, h: 300}
+      {x: 150, y: 0, w: 40, h: 320}, 
+      {x: 350, y: 80, w: 40, h: 320}
     ]
   },
   { 
@@ -37,10 +37,10 @@ const levels = [
     indicator: "GENERATOR_02",
     qteSpeed: 14, 
     walls: [
-      {x: 100, y: 0, w: 20, h: 320},
-      {x: 200, y: 80, w: 20, h: 320},
-      {x: 300, y: 0, w: 20, h: 320},
-      {x: 400, y: 80, w: 20, h: 320}
+      {x: 100, y: 0, w: 25, h: 350},  
+      {x: 200, y: 50, w: 25, h: 350}, 
+      {x: 300, y: 0, w: 25, h: 350},  
+      {x: 400, y: 50, w: 25, h: 350}  
     ]
   },
   { 
@@ -49,11 +49,7 @@ const levels = [
     indicator: "CENTRAL_MAINFRAME",
     qteSpeed: 20, 
     walls: [
-      {x: 100, y: 60, w: 400, h: 20}, 
-      {x: 100, y: 260, w: 400, h: 20},
-      {x: 100, y: 80, w: 20, h: 100},
-      {x: 250, y: 140, w: 20, h: 80},
-      {x: 400, y: 240, w: 20, h: 160}
+      {x: 300, y: 0, w: 60, h: 400} 
     ]
   }
 ];
@@ -88,16 +84,14 @@ function updateHallway() {
   if (keys["a"] || keys["ArrowLeft"]) nextX -= player.speed;
   if (keys["d"] || keys["ArrowRight"]) nextX += player.speed;
 
-  // BOUNDARY LOCK: Levels 1 & 2 only
   if (currentLevel < 3) {
-      if (nextY < 50) nextY = 50; 
-      if (nextY > 320) nextY = 320; 
+      if (nextY < 0) nextY = 0; 
+      if (nextY > 370) nextY = 370; 
       if (nextX < 0) nextX = 0; 
   }
 
   let hitWall = false;
   const currentWalls = levels[currentLevel - 1]?.walls || [];
-  
   currentWalls.forEach(wall => {
     if (isColliding({x: nextX, y: nextY, size: player.size}, wall)) {
       hitWall = true;
@@ -116,9 +110,8 @@ function updateHallway() {
 }
 
 function drawHallway() {
-  ctx.fillStyle = "#000";
+  ctx.fillStyle = "rgba(0, 0, 0, 0.3)"; 
   ctx.fillRect(0, 0, canvas.width, canvas.height);
-  
   ctx.fillStyle = "#1a331a"; 
   const currentWalls = levels[currentLevel - 1]?.walls || [];
   currentWalls.forEach(wall => {
@@ -128,12 +121,10 @@ function drawHallway() {
   ctx.fillStyle = "#ff4444";
   ctx.fillRect(door.x, door.y, door.width, door.height);
   
-  // Player Color logic (Glitch for Level 3)
   ctx.fillStyle = (currentLevel === 3 && Math.random() > 0.8) ? "#ffffff" : "#4dfd4d";
   ctx.fillRect(player.x, player.y, player.size, player.size);
 }
 
-// --- QTE Logic ---
 function startQTE() {
   gameState = "qte";
   qteData.active = true;
@@ -168,6 +159,10 @@ function checkQTE() {
     player.x = 50; 
     updateTerminal(); 
   } else {
+    document.querySelector(".terminal-frame").classList.add("shake");
+    setTimeout(() => {
+      document.querySelector(".terminal-frame").classList.remove("shake");
+    }, 400);
     qteData.sliderX = 0;
   }
 }
@@ -175,7 +170,18 @@ function checkQTE() {
 function updateTerminal() {
   const current = levels[currentLevel];
   if (current) {
-    scrambledEl.innerText = current.scramble;
+    scrambledEl.style.color = "#ff4444";
+    let count = 0;
+    const interval = setInterval(() => {
+      scrambledEl.innerText = Math.random().toString(36).substring(2, 10).toUpperCase();
+      count++;
+      if (count > 10) {
+        clearInterval(interval);
+        scrambledEl.innerText = current.scramble;
+        scrambledEl.style.color = "#4dfd4d";
+      }
+    }, 50);
+    
     levelIndicator.innerText = `${current.indicator}: OFFLINE`;
     input.value = ""; 
   } else {
@@ -196,6 +202,12 @@ document.getElementById("start-btn").addEventListener("click", () => {
 
 document.getElementById("button").addEventListener("click", () => {
   const userValue = input.value.toUpperCase();
+  
+  if (userValue === "HELP") {
+    document.getElementById("output").innerText = "SYSTEM_LOG: Room 403 contains the stabilizer. 406 is just the warning.";
+    return; 
+  }
+
   if (userValue === levels[currentLevel].word) {
     transitionScreen.classList.remove("hidden");
     currentLevel++; 
@@ -210,6 +222,10 @@ document.getElementById("button").addEventListener("click", () => {
         document.querySelector(".quote").innerText = '"When the path is blocked, the void is your only friend."';
     }
   } else {
+    document.querySelector(".terminal-frame").classList.add("shake");
+    setTimeout(() => {
+      document.querySelector(".terminal-frame").classList.remove("shake");
+    }, 400);
     alert("ACCESS DENIED: INCORRECT SEQUENCE");
     input.value = "";
   }
