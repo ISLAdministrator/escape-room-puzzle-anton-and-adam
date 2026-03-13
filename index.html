@@ -1,31 +1,73 @@
-<!--This is an HTML Comment, text just for humans :) It is not part of your code.
-Good coders use comments frequently to stay organized and communicate with collaborators.
-
-The code below is basic HTML for your puzzle.
-You can edit it, add to it, and delete parts of it.
-
-DO NOT let AI code for you!!
--->
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
-  <title>Escape Room</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ISL: The Aftermath</title>
   <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 </head>
+
 <body>
+  <div id="start-screen">
+    <div class="instruction-box">
+      <h1>LOCATION: ROOM 406 (I&S / Language)</h1>
+      <p>> You step into the classroom and realize this isn't about fixing things — it’s about understanding
+        consequences.</p>
+      <p>> The walls are covered with timelines and radiation experiments. Notes in the margins read: “Stabilised — but
+        only temporarily.”</p>
+      <p>> A message glows on the board: <strong>“HISTORY DOES NOT GIVE ANSWERS. IT GIVES WARNINGS.”</strong></p>
+      <p>> Identify what scientists in the past got wrong to move forward.</p>
+      <hr>
+      <button id="start-btn">INITIALIZE RECOVERY</button>
+    </div>
+  </div>
 
-  <h1>Escape Room</h1>
+  <div id="transition-screen" class="hidden">
+    <div class="instruction-box">
+      <h1 id="note-title">GENERATOR 1 ONLINE</h1>
+      <p id="note-text">Transferring power to the next sector...</p>
+      <p class="quote">"History does not give answers. It gives answers."</p>
+      <hr>
+      <button id="next-lvl-btn">PROCEED TO NEXT GENERATOR</button>
+    </div>
+  </div>
 
-  <p>
-    Write the story of your escape room here.
-  </p>
+  <div class="terminal-frame">
+    <div class="scanlines"></div>
+    <h1 class="critical-text" id="level-indicator">GENERATOR_01: OFFLINE</h1>
 
-  <button id="button">Click me</button>
+    <canvas id="gameCanvas" width="600" height="400" class="hidden"></canvas>
 
-  <p id="output"></p>
+    <div class="puzzle-area" id="terminal-area">
+      <p>DECODE SEQUENCE:</p>
+      <h2 id="scrambled-word">EMDPWREOE</h2>
+
+      <input type="text" id="user-input" placeholder="TYPE WORD..." autocomplete="off">
+      <br>
+      <button id="button">RUN DIAGNOSTICS</button>
+    </div>
+
+    <p id="output"></p>
+    <p id="hint" class="hidden-hint"></p>
+  </div>
+
+  <div id="win-screen" class="hidden">
+    <div class="instruction-box">
+      <h1 style="color: #4dfd4d;">INCIDENT CLASSIFIED: ROOM 406</h1>
+      <p>> As you organize the evidence, patterns form. Past incidents failed because reactions were underestimated.</p>
+      <p>> The board updates: <strong>“CHEMICAL STABILITY, BIOLOGICAL IMPACT, ENVIRONMENTAL DESIGN.”</strong></p>
+      <p>> <strong>FURTHER TESTING REQUIRED.</strong> ROUTE TO: 403 SCIENCE CLASSROOM.</p>
+      <p>> Under the text is one letter: <span style="font-size: 30px; color: #ff4444;">N</span></p>
+      <hr>
+      <button onclick="window.location.href='https://isladministrator.github.io/escape-room-puzzle-daryna-and-keira/'">
+        PROCEED TO ROOM 403
+      </button>
+    </div>
+  </div>
 
   <script src="script.js"></script>
 </body>
+
 </html>
