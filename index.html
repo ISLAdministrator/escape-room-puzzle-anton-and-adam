@@ -10,17 +10,19 @@
 </head>
 
 <body>
-<div id="start-screen">
+  <div id="start-screen">
     <div class="instruction-box">
       <h1>LOCATION: ROOM 406 (I&S / Language)</h1>
-      <p>> You step into the classroom and realize this isn't about fixing things — it’s about understanding consequences.</p>
-      <p>> The walls are covered with timelines and radiation experiments. Notes in the margins read: “Stabilised — but only temporarily.”</p>
+      <p>> You step into the classroom and realize this isn't about fixing things — it’s about understanding
+        consequences.</p>
+      <p>> The walls are covered with timelines and radiation experiments. Notes in the margins read: “Stabilised — but
+        only temporarily.”</p>
       <p>> A message glows on the board: <strong>“HISTORY DOES NOT GIVE ANSWERS. IT GIVES WARNINGS.”</strong></p>
       <p>> Identify what scientists in the past got wrong to move forward.</p>
       <hr>
       <button id="start-btn">INITIALIZE RECOVERY</button>
     </div>
-</div>
+  </div>
 
   <div id="transition-screen" class="hidden">
     <div class="instruction-box">
@@ -51,7 +53,7 @@
     <p id="hint" class="hidden-hint"></p>
   </div>
 
-<div id="win-screen" class="hidden">
+  <div id="win-screen" class="hidden">
     <div class="instruction-box">
       <h1 style="color: #4dfd4d;">INCIDENT CLASSIFIED: ROOM 406</h1>
       <p>> As you organize the evidence, patterns form. Past incidents failed because reactions were underestimated.</p>
@@ -59,9 +61,11 @@
       <p>> <strong>FURTHER TESTING REQUIRED.</strong> ROUTE TO: 403 SCIENCE CLASSROOM.</p>
       <p>> Under the text is one letter: <span style="font-size: 30px; color: #ff4444;">N</span></p>
       <hr>
-      <button onclick="location.reload()">PROCEED TO ROOM 403</button>
+      <button onclick="window.location.href='https://isladministrator.github.io/escape-room-puzzle-daryna-and-keira/'">
+        PROCEED TO ROOM 403
+      </button>
     </div>
-</div>
+  </div>
 
   <script src="script.js"></script>
 </body>
